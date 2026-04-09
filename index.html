@@ -548,7 +548,7 @@
           <span class="sep">//</span>
           DEPLOY OR DIE
           <span class="sep">//</span>
-          <span id="sprint-counter">SPRINT 1/5</span>
+          <span id="sprint-counter">SPRINT 1/4</span>
         </div>
       </div>
 
@@ -737,7 +737,7 @@
       glitchState.clear();
       const shuffled = [...TASK_POOL].sort(() => Math.random() - 0.5);
       state = {
-        tasks:      shuffled.slice(0, 5),
+        tasks:      shuffled.slice(0, 4),
         current:    0,
         time:       10,
         debt:       0,
@@ -753,9 +753,9 @@
       updateMeters();
       renderTask();
       clearLog();
-      log('info', '[SYS]', 'Sprint initialized. 5 tasks queued. 10 time units allocated.');
+      log('info', '[SYS]', 'Sprint initialized. 4 tasks queued. 10 time units allocated.');
       log('info', '[SYS]', 'Every 20 debt adds +1 time cost to all future actions.');
-      log('',     '[>>>]', 'Awaiting your decision on task 1/5.');
+      log('',     '[>>>]', 'Awaiting your decision on task 1/4.');
     }
 
     // ─── RENDERING ─────────────────────────────────────────────────────────
@@ -771,9 +771,9 @@
       const cc   = 3 + tax;
       const qc   = 1 + tax;
 
-      document.getElementById('sprint-counter').textContent = `SPRINT ${n}/5`;
+      document.getElementById('sprint-counter').textContent = `SPRINT ${n}/4`;
       document.getElementById('task-id').textContent =
-        `TASK-${n} OF 5  ·  ASSIGNED: YOU  ·  PRIORITY: P0`;
+        `TASK-${n} OF 4  ·  ASSIGNED: YOU  ·  PRIORITY: P0`;
       document.getElementById('task-title').textContent = name;
       document.getElementById('task-desc').textContent  = TASK_FLAVOR[name];
 
@@ -853,12 +853,12 @@
       updateMeters();
 
       if (state.debt >= 100)   return triggerEnding('collapse');
-      if (state.current >= 5)  return triggerEnding('success');
+      if (state.current >= 4)  return triggerEnding('success');
       if (state.time <= 0)     return triggerEnding('deadline');
 
       renderTask();
       log('info', '[SYS]',
-        `Task ${state.current + 1}/5 loaded. Time: ${state.time}u. Debt: ${state.debt}.`);
+        `Task ${state.current + 1}/4 loaded. Time: ${state.time}u. Debt: ${state.debt}.`);
     }
 
     // ─── ENDINGS ───────────────────────────────────────────────────────────
@@ -910,13 +910,13 @@
         titleEl.textContent = '> DEADLINE MISSED';
         bodyEl.textContent  =
           'You ran out of time. The sprint ended. ' +
-          `${5 - done} task${5 - done !== 1 ? 's' : ''} left unshipped. ` +
+          `${4 - done} task${4 - done !== 1 ? 's' : ''} left unshipped. ` +
           'The stakeholders are in the lobby. The demo starts in ten minutes.';
-        log('warn', '[!!!]', `DEADLINE: time exhausted. ${done}/5 tasks shipped.`);
+        log('warn', '[!!!]', `DEADLINE: time exhausted. ${done}/4 tasks shipped.`);
       }
 
       statsEl.innerHTML =
-        `<div>TASKS SHIPPED:    <span>${done} / 5</span></div>` +
+        `<div>TASKS SHIPPED:    <span>${done} / 4</span></div>` +
         `<div>TIME SPENT:       <span>${spent} / 10 units</span></div>` +
         `<div>DEBT ACCUMULATED: <span>${state.debt} / 100</span></div>` +
         `<div>CLEAN / QUICK:    <span>${state.cleanCount} clean, ${state.quickCount} quick</span></div>`;
