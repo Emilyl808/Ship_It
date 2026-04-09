@@ -587,7 +587,7 @@
           <div class="meter-track">
             <div class="meter-fill time" id="time-fill"></div>
           </div>
-          <span class="meter-value" id="time-value">10</span>
+          <span class="meter-value" id="time-value">11</span>
         </div>
       </div>
 
@@ -739,7 +739,7 @@
       state = {
         tasks:      shuffled.slice(0, 5),
         current:    0,
-        time:       10,
+        time:       11,
         debt:       0,
         cleanCount: 0,
         quickCount: 0,
@@ -752,8 +752,9 @@
 
       updateMeters();
       renderTask();
+      checkAffordability();
       clearLog();
-      log('info', '[SYS]', 'Sprint initialized. 5 tasks queued. 10 time units allocated.');
+      log('info', '[SYS]', 'Sprint initialized. 5 tasks queued. 11 time units allocated.');
       log('info', '[SYS]', 'Every 20 debt adds +1 time cost to all future actions.');
       log('',     '[>>>]', 'Awaiting your decision on task 1/5.');
     }
@@ -799,9 +800,20 @@
         `yolo deploy, fix later · costs ${qc} time unit${qc !== 1 ? 's' : ''} · +20 debt`;
     }
 
+    function checkAffordability() {
+      const tax      = debtTax();
+      const canClean = state.time >= 3 + tax;
+      const canQuick = state.time >= 1 + tax;
+
+      document.getElementById('btn-clean').disabled = !canClean;
+      document.getElementById('btn-quick').disabled = !canQuick;
+
+      if (!canQuick) triggerEnding('deadline');
+    }
+
     function updateMeters() {
       const dp = Math.min(100, (state.debt / 100) * 100);
-      const tp = Math.max(0,   (state.time / 10)  * 100);
+      const tp = Math.max(0,   (state.time / 11)  * 100);
 
       document.getElementById('debt-fill').style.width = dp + '%';
       document.getElementById('debt-value').textContent = state.debt;
@@ -854,11 +866,13 @@
 
       if (state.debt >= 100)   return triggerEnding('collapse');
       if (state.current >= 5)  return triggerEnding('success');
-      if (state.time <= 0)     return triggerEnding('deadline');
 
       renderTask();
-      log('info', '[SYS]',
-        `Task ${state.current + 1}/5 loaded. Time: ${state.time}u. Debt: ${state.debt}.`);
+      checkAffordability();
+      if (!state.over) {
+        log('info', '[SYS]',
+          `Task ${state.current + 1}/5 loaded. Time: ${state.time}u. Debt: ${state.debt}.`);
+      }
     }
 
     // ─── ENDINGS ───────────────────────────────────────────────────────────
@@ -875,7 +889,7 @@
 
       const done     = Math.min(state.current, 5);
       const timeLeft = Math.max(0, state.time);
-      const spent    = Math.min(10, 10 - state.time);
+      const spent    = Math.min(11, 11 - state.time);
 
       // Resolve which success variant
       let endType = type;
@@ -917,7 +931,7 @@
 
       statsEl.innerHTML =
         `<div>TASKS SHIPPED:    <span>${done} / 5</span></div>` +
-        `<div>TIME SPENT:       <span>${spent} / 10 units</span></div>` +
+        `<div>TIME SPENT:       <span>${spent} / 11 units</span></div>` +
         `<div>DEBT ACCUMULATED: <span>${state.debt} / 100</span></div>` +
         `<div>CLEAN / QUICK:    <span>${state.cleanCount} clean, ${state.quickCount} quick</span></div>`;
 
